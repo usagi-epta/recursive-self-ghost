@@ -41,6 +41,10 @@
 
   <script>
     const ALLOWED_DIRS = ['workspace', 'evolution', 'scripts'];
+    const BRIDGE_MODES = Object.freeze({
+      MOCK: 'mock',
+      PERSISTENT: 'persistent'
+    });
 
     // NOTE: Gallery skills execute in a constrained environment. This in-page
     // mock dataset allows deterministic local behavior when host file APIs are unavailable.
@@ -61,10 +65,12 @@
         'capsules.json': '{"capsules":[]}'
       }
     };
+    const pendingHostRequests = new Map();
+    let activeMode = BRIDGE_MODES.PERSISTENT;
 
     function log(message, type = 'info') {
       const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
-      const entry = `[${timestamp}] ${message}`;
+      const entry = `[${timestamp}] [mode=${activeMode}] ${message}`;
       console.log(`[${type.toUpperCase()}] ${entry}`);
 
       const container = document.getElementById('log-container');
@@ -90,7 +96,74 @@
       return isValid ? cleanPath : null;
     }
 
-    const handlers = {
+    function generateCorrelationId(prefix = 'host') {
+      return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    function detectRequestedMode() {
+      try {
+        const queryMode = new URLSearchParams(window.location.search).get('mode');
+        const globalMode = window.__SECOND_SELF_BRIDGE_MODE;
+        const requested = String(queryMode || globalMode || '').toLowerCase();
+        if (requested === BRIDGE_MODES.MOCK) return BRIDGE_MODES.MOCK;
+        if (requested === BRIDGE_MODES.PERSISTENT) return BRIDGE_MODES.PERSISTENT;
+      } catch (err) {
+        log(`Mode detection failed, defaulting to persistent: ${err.message}`, 'warning');
+      }
+      return BRIDGE_MODES.PERSISTENT;
+    }
+
+    function sendToHost(payload) {
+      const message = typeof payload === 'string' ? payload : JSON.stringify(payload);
+      let delivered = false;
+
+      if (window.aiEdgeBridge && typeof window.aiEdgeBridge.postMessage === 'function') {
+        window.aiEdgeBridge.postMessage(message);
+        delivered = true;
+      }
+      if (window.webkit?.messageHandlers?.aiEdgeBridge?.postMessage) {
+        window.webkit.messageHandlers.aiEdgeBridge.postMessage(payload);
+        delivered = true;
+      } else if (window.webkit?.messageHandlers?.bridge?.postMessage) {
+        window.webkit.messageHandlers.bridge.postMessage(payload);
+        delivered = true;
+      } else if (window.webkit?.messageHandlers?.filesystemBridge?.postMessage) {
+        window.webkit.messageHandlers.filesystemBridge.postMessage(payload);
+        delivered = true;
+      }
+      if (window.parent && typeof window.parent.postMessage === 'function') {
+        window.parent.postMessage(message, '*');
+        delivered = true;
+      }
+
+      return delivered;
+    }
+
+    function callHostTool(action, parameters = {}, correlationId = generateCorrelationId(), timeoutMs = 15000) {
+      return new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+          pendingHostRequests.delete(correlationId);
+          reject(new Error(`Host timeout waiting for tool_result: ${action}`));
+        }, timeoutMs);
+
+        pendingHostRequests.set(correlationId, { resolve, reject, timer, action });
+        const sent = sendToHost({
+          type: 'tool_call',
+          action,
+          parameters,
+          id: correlationId,
+          timestamp: new Date().toISOString()
+        });
+
+        if (!sent) {
+          clearTimeout(timer);
+          pendingHostRequests.delete(correlationId);
+          reject(new Error('No host bridge transport available'));
+        }
+      });
+    }
+
+    const mockHandlers = {
       list_files: (params = {}) => {
         const path = normalizePath(params.path);
         if (!path) return { error: 'Invalid path' };
@@ -170,6 +243,47 @@
       }
     };
 
+    function normalizeHostResult(action, parameters, hostResult = {}) {
+      if (hostResult.result && typeof hostResult.result === 'object') return hostResult.result;
+      const data = hostResult.data ?? hostResult.content ?? hostResult.entries ?? null;
+
+      if (action === 'read_file') {
+        const content = typeof data === 'string' ? data : String(data ?? '');
+        return { success: true, path: normalizePath(parameters.path), content, size: content.length };
+      }
+      if (action === 'list_files') {
+        const entries = Array.isArray(data) ? data : (Array.isArray(hostResult.entries) ? hostResult.entries : []);
+        return { success: true, path: normalizePath(parameters.path), entries };
+      }
+      if (action === 'write_file') {
+        return {
+          success: true,
+          operation: parameters.append ? 'append' : 'write',
+          path: normalizePath(parameters.path),
+          bytes_written: String(parameters.content ?? '').length
+        };
+      }
+      if (action === 'search') {
+        const results = Array.isArray(data) ? data : (Array.isArray(hostResult.results) ? hostResult.results : []);
+        return { success: true, path: normalizePath(parameters.path), query: String(parameters.query ?? ''), results };
+      }
+      return { success: true, data };
+    }
+
+    async function runAction(action, parameters = {}, correlationId = generateCorrelationId('bridge')) {
+      if (activeMode === BRIDGE_MODES.MOCK) {
+        const result = mockHandlers[action](parameters);
+        if (result.error) throw new Error(result.error);
+        return result;
+      }
+
+      const hostPayload = await callHostTool(action, parameters, correlationId);
+      if (!hostPayload || hostPayload.status !== 'success') {
+        throw new Error(hostPayload?.error || `Host ${action} failed`);
+      }
+      return normalizeHostResult(action, parameters, hostPayload);
+    }
+
     function makeResponse({ status, correlationId = null, result = null, error = null }) {
       return JSON.stringify({
         status,
@@ -190,16 +304,12 @@
           return makeResponse({ status: 'error', correlationId, error: 'Missing action' });
         }
 
-        const handler = handlers[action];
+        const handler = mockHandlers[action];
         if (!handler) {
           return makeResponse({ status: 'error', correlationId, error: `Unknown action: ${action}` });
         }
 
-        const result = handler(parameters || {});
-        if (result.error) {
-          log(`Failed: ${result.error}`, 'error');
-          return makeResponse({ status: 'error', correlationId, error: result.error });
-        }
+        const result = await runAction(action, parameters || {}, correlationId || generateCorrelationId('request'));
 
         log(`Success: ${action}`, 'success');
         return makeResponse({ status: 'success', correlationId, result });
@@ -209,17 +319,68 @@
       }
     };
 
-    // Backward-compatible listener for legacy host integrations.
+    function handleIncomingHostMessage(rawData) {
+      if (!rawData) return false;
+      let payload = rawData;
+      if (typeof payload === 'string') {
+        try { payload = JSON.parse(payload); } catch (err) { return false; }
+      }
+      if (!payload || payload.type !== 'tool_result' || !payload.id) return false;
+
+      const pending = pendingHostRequests.get(payload.id);
+      if (!pending) return true;
+
+      clearTimeout(pending.timer);
+      pendingHostRequests.delete(payload.id);
+
+      if (payload.status === 'success') pending.resolve(payload);
+      else pending.reject(new Error(payload.error || `Host reported failure for ${pending.action}`));
+
+      return true;
+    }
+
+    // Backward-compatible listener for legacy host integrations and host tool results.
     window.addEventListener('message', async (event) => {
       if (!event || event.data == null) return;
+      if (handleIncomingHostMessage(event.data)) return;
       const response = await window.ai_edge_gallery_get_result(event.data);
       if (window.parent && typeof window.parent.postMessage === 'function') {
         window.parent.postMessage(response, '*');
       }
     });
 
-    updateStatus('Bridge initialised and ready');
+    async function runPersistenceSelfCheck() {
+      if (activeMode !== BRIDGE_MODES.PERSISTENT) {
+        updateStatus('Bridge ready (mock mode)');
+        log('Mock mode selected for local testing fallback', 'warning');
+        return;
+      }
+
+      const probePath = `evolution/.persistence_probe_${Date.now()}.json`;
+      const probeContent = JSON.stringify({
+        kind: 'bridge_probe',
+        timestamp: new Date().toISOString()
+      });
+
+      try {
+        await runAction('write_file', { path: probePath, content: probeContent, append: false }, generateCorrelationId('probe_write'));
+        const probeRead = await runAction('read_file', { path: probePath }, generateCorrelationId('probe_read'));
+        if (probeRead.content !== probeContent) {
+          throw new Error('Probe read content mismatch');
+        }
+        updateStatus('Bridge ready (persistent mode: verified)');
+        log(`Persistence self-check passed via ${probePath}`, 'success');
+      } catch (err) {
+        log(`Persistent mode unavailable, falling back to mock: ${err.message}`, 'warning');
+        activeMode = BRIDGE_MODES.MOCK;
+        updateStatus('Bridge ready (mock fallback after persistence check failure)');
+      }
+    }
+
+    activeMode = detectRequestedMode();
+    updateStatus(`Bridge initialising (requested mode: ${activeMode})`);
     log('Second-Self bridge loaded with ai_edge_gallery_get_result', 'success');
+    runPersistenceSelfCheck();
   </script>
 </body>
 </html>
