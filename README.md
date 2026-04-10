@@ -35,13 +35,11 @@ second-self/
 ```
 ## Credits
 
+Initial inspiration credit goes to the following skill repos:
+
 [AIEdgeGallerySkill:persona](https://github.com/khimaros/eai-skills/tree/master/persona)
 [AIEdgeGallerySkill:second-brain](https://github.com/uussnn/second-brain)
 
 ### LLM Workhorse
 
-Kimi K2.5 Thinking
-Claude Sonnet 4.6 Thinking
-DeepSeek-V3.2-Exp-Think
-Gemini 3 Thinking & Pro
-ChatGPT 5.4 Thinking & Codex
+Kimi K2.5 Thinking | Claude Sonnet 4.6 Thinking | DeepSeek-V3.2-Exp-Think | Gemini 3 Thinking & Pro | ChatGPT 5.4 Thinking & Codex
