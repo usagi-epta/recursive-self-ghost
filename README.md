@@ -21,7 +21,7 @@ Perfect for: AI assistants, code review bots, research agents, creative partners
 ## 🚀 Quick Start (30 seconds)
 
 ```bash
-cd /mnt/kimi/output/recursive_self
+cd /recursive_self
 pip install -e .
 python recursive_agent.py
 ```
@@ -32,7 +32,7 @@ python recursive_agent.py
    L3 Version: 1.0.0
 
 [Second Self v1.0.0]
-Processed: "Hello, I am Jamie J."
+Processed: "Hello, I am Vana!"
 Alignment: 100%
 ```
 
@@ -70,7 +70,7 @@ Alignment: 100%
 │                    RECURSIVE AGENT                          │
 ├─────────────────────────────────────────────────────────────┤
 │  L3: Ego-State (Genome)                                     │
-│  ├── persona_version: "1.0.1"                              │
+│  ├── persona_version: "1.0.1"                               │
 │  ├── cognitive_alignment: 0.95                              │
 │  ├── key_observations: [...]                                │
 │  └── learned_patterns: [...]                                │
@@ -256,7 +256,7 @@ See `integration_examples.py` for details.
 
 ```bash
 # Clone/copy files
-cd /mnt/kimi/output/recursive_self
+cd /recursive_self
 
 # Install package
 pip install -e .
@@ -282,7 +282,7 @@ MIT License - See LICENSE file
 
 ## 🙏 Acknowledgments
 
-Based on research: "Architectures of Persistence - Recursive Self-Evolution in Non-Persistent Large Language Model Environments"
+Based on research: "[Architectures of Persistence - Recursive Self-Evolution in Non-Persistent Large Language Model Environments](https://github.com/usagi-epta/second-self-skill/blob/main/research/Architectures%20of%20Persistence%20-%20Recursive%20Self-Evolution%20in%20Non-Persistent%20Large%20Language%20Model%20Environments.md)"
 
 ---
 
@@ -290,3 +290,7 @@ Based on research: "Architectures of Persistence - Recursive Self-Evolution in N
 **Architecture Version:** 3.0.0-GHOST  
 **Total Lines:** ~2,500 Python  
 **Test Status:** Core functionality verified ✅
+
+**AI Used:** Yes | **LLM Used:** moonshot.ai - Kimi K2.5 Thinking | Anthropic - Claude Sonnet 4.6 Thinking
+
+# This is a project created for fun and should NEVER be taken seriously! *Project partially used for worldbuilding for writing.*
