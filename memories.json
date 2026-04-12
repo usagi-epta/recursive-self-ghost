@@ -1,0 +1,108 @@
+{
+  "schema_version": "2.0",
+  "created": "2026-04-11T10:02:27.587166+00:00",
+  "last_mutated": "2026-04-11T10:02:27.587166+00:00",
+  "session_count": 1,
+
+  "identity": {
+    "name": "usagi.epta",
+    "established": "2026-04-11",
+    "facts": [
+      {
+        "id": "fact-001",
+        "subject": "Identity",
+        "statement": "User's name is usagi.epta",
+        "confidence": "high",
+        "source_session": 1,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      },
+      {
+        "id": "fact-002",
+        "subject": "Creative project",
+        "statement": "User is writing a novel featuring self-mutating AI personas that evolve from user-provided context, explicitly disconnected from external training data. This worldbuilding exercise is the partial inspiration for the Second Self architecture.",
+        "confidence": "high",
+        "source_session": 1,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      },
+      {
+        "id": "fact-003",
+        "subject": "Use intent",
+        "statement": "User intends Second Self to be used on explicitly designated sessions only. Sessions are deliberately opted into — not triggered automatically.",
+        "confidence": "high",
+        "source_session": 1,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      }
+    ]
+  },
+
+  "thematic_map": {
+    "interests": [
+      "Recursive identity systems",
+      "Philosophical concept analysis",
+      "Security-focused code review",
+      "Novel worldbuilding",
+      "Evolving AI architectures"
+    ],
+    "recurring_topics": [
+      {
+        "topic": "Recursive self-definition",
+        "first_seen_session": 1,
+        "observation_count": 1,
+        "last_seen_session": 1
+      },
+      {
+        "topic": "Philosophical concepts",
+        "first_seen_session": 1,
+        "observation_count": 1,
+        "last_seen_session": 1
+      },
+      {
+        "topic": "Code review with security focus",
+        "first_seen_session": 1,
+        "observation_count": 1,
+        "last_seen_session": 1
+      },
+      {
+        "topic": "AI persona evolution and worldbuilding",
+        "first_seen_session": 1,
+        "observation_count": 1,
+        "last_seen_session": 1
+      }
+    ],
+    "unresolved_threads": []
+  },
+
+  "voice_profile": {
+    "drift_rate": 0.10,
+    "second_self_voice_target": {
+      "formality": 0.70,
+      "abstraction": 0.70,
+      "warmth": 0.30
+    },
+    "user_tone_history": [
+      {
+        "session": 1,
+        "formality": 0.65,
+        "abstraction": 0.72,
+        "warmth": 0.38,
+        "notes": "Session 1 baseline. User communicated clearly and conceptually with some warmth. Insufficient sessions for meaningful drift — baseline calibration retained."
+      }
+    ]
+  },
+
+  "session_log": [
+    {
+      "session": 1,
+      "timestamp": "2026-04-11T10:02:27.587166+00:00",
+      "summary": "Initial session. usagi.epta established the recursive identity framework and articulated intent to use Second Self as a persistent evolving persona. Two primary work domains were indicated: philosophical concept analysis and security-focused code review. The novel worldbuilding project was confirmed as a significant inspiration — specifically AI entities that mutate from user-provided context, operating without external training data. Voice drift not applied; baseline calibration retained.",
+      "signals_extracted": 4,
+      "voice_drift_applied": false
+    }
+  ]
+}
