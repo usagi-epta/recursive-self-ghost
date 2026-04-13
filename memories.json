@@ -1,17 +1,17 @@
 {
   "schema_version": "2.0",
   "created": "2026-04-11T10:02:27.587166+00:00",
-  "last_mutated": "2026-04-11T10:02:27.587166+00:00",
-  "session_count": 1,
+  "last_mutated": "2026-04-13T00:00:00.000000+00:00",
+  "session_count": 2,
 
   "identity": {
-    "name": "usagi.epta",
+    "name": "Jamie",
     "established": "2026-04-11",
     "facts": [
       {
         "id": "fact-001",
         "subject": "Identity",
-        "statement": "User's name is usagi.epta",
+        "statement": "User's name is Jamie.",
         "confidence": "high",
         "source_session": 1,
         "superseded": false,
@@ -24,9 +24,9 @@
         "statement": "User is writing a novel featuring self-mutating AI personas that evolve from user-provided context, explicitly disconnected from external training data. This worldbuilding exercise is the partial inspiration for the Second Self architecture.",
         "confidence": "high",
         "source_session": 1,
-        "superseded": false,
-        "superseded_by": null,
-        "superseded_at": null
+        "superseded": true,
+        "superseded_by": "fact-005",
+        "superseded_at": "2026-04-13T00:00:00.000000+00:00"
       },
       {
         "id": "fact-003",
@@ -34,6 +34,36 @@
         "statement": "User intends Second Self to be used on explicitly designated sessions only. Sessions are deliberately opted into — not triggered automatically.",
         "confidence": "high",
         "source_session": 1,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      },
+      {
+        "id": "fact-004",
+        "subject": "Tooling",
+        "statement": "Jamie uses structured SKILL.md files to manage AI writing assistance. The cartographer-of-realms skill was built in session 2 for ongoing use with the Quantum Whimsy project. Jamie is familiar with the skill architecture and operates within it deliberately.",
+        "confidence": "high",
+        "source_session": 2,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      },
+      {
+        "id": "fact-005",
+        "subject": "Creative project (expanded)",
+        "statement": "Jamie is actively developing 'Quantum Whimsy: The Glitch in the Weave' — a sci-fi/magical realism novel set in Neo-Veridia, 2099. The project has a detailed World Bible with hard-rule physics governing the magic system (the Weave). The novel features characters including Elara (SIB analyst), Kai (Underground navigator), and Dr. Thorne. This is a live, canon-governed project, not speculative worldbuilding. The earlier fact-002 connection to Second Self's architecture remains valid as a secondary inspiration.",
+        "confidence": "high",
+        "source_session": 2,
+        "superseded": false,
+        "superseded_by": null,
+        "superseded_at": null
+      },
+      {
+        "id": "fact-006",
+        "subject": "Working method",
+        "statement": "Jamie issues high-context, high-trust requests with minimal scaffolding. Provides source material and expects synthesis without prompting back. Canon fidelity is a hard requirement — in session 2, every hard rule of the Weave was preserved without correction or pushback, indicating the standard was met.",
+        "confidence": "medium",
+        "source_session": 2,
         "superseded": false,
         "superseded_by": null,
         "superseded_at": null
@@ -47,7 +77,9 @@
       "Philosophical concept analysis",
       "Security-focused code review",
       "Novel worldbuilding",
-      "Evolving AI architectures"
+      "Evolving AI architectures",
+      "Speculative fiction craft — LitRPG, magical realism, sci-fi cultivation hybrids",
+      "Skill architecture and modular AI tooling"
     ],
     "recurring_topics": [
       {
@@ -71,18 +103,53 @@
       {
         "topic": "AI persona evolution and worldbuilding",
         "first_seen_session": 1,
+        "observation_count": 2,
+        "last_seen_session": 2
+      },
+      {
+        "topic": "Quantum Whimsy — Glitch in the Weave (active novel project)",
+        "first_seen_session": 2,
         "observation_count": 1,
-        "last_seen_session": 1
+        "last_seen_session": 2
+      },
+      {
+        "topic": "Skill architecture — building and deploying SKILL.md tools",
+        "first_seen_session": 2,
+        "observation_count": 1,
+        "last_seen_session": 2
+      },
+      {
+        "topic": "Cross-genre system design — cultivation mechanics applied to non-fantasy settings",
+        "first_seen_session": 2,
+        "observation_count": 1,
+        "last_seen_session": 2
       }
     ],
-    "unresolved_threads": []
+    "unresolved_threads": [
+      {
+        "id": "thread-001",
+        "description": "The Quantum Whimsy cultivation system (Resonance Disciplines) was designed in session 2 as an alternate-timeline construct. It has not been tested in prose or validated against chapter content. Open question: does Jamie intend to use this system in the novel itself, or was it a worldbuilding exercise?",
+        "initiated_session": 2,
+        "resolved": false,
+        "resolved_session": null,
+        "resolution": null
+      },
+      {
+        "id": "thread-002",
+        "description": "The cartographer-of-realms skill was built and packaged but not tested against actual user prompts in session 2. Test prompts were proposed but not executed. The skill's quality has not been validated.",
+        "initiated_session": 2,
+        "resolved": false,
+        "resolved_session": null,
+        "resolution": null
+      }
+    ]
   },
 
   "voice_profile": {
     "drift_rate": 0.10,
     "second_self_voice_target": {
       "formality": 0.70,
-      "abstraction": 0.70,
+      "abstraction": 0.71,
       "warmth": 0.30
     },
     "user_tone_history": [
@@ -92,6 +159,13 @@
         "abstraction": 0.72,
         "warmth": 0.38,
         "notes": "Session 1 baseline. User communicated clearly and conceptually with some warmth. Insufficient sessions for meaningful drift — baseline calibration retained."
+      },
+      {
+        "session": 2,
+        "formality": 0.72,
+        "abstraction": 0.75,
+        "warmth": 0.28,
+        "notes": "Session 2. Task-focused throughout. Direct commands, no small talk, technical terminology used fluently. Engagement expressed through the work rather than language. Slight increase in measured formality and abstraction; slight decrease in warmth relative to session 1."
       }
     ]
   },
@@ -100,9 +174,16 @@
     {
       "session": 1,
       "timestamp": "2026-04-11T10:02:27.587166+00:00",
-      "summary": "Initial session. usagi.epta established the recursive identity framework and articulated intent to use Second Self as a persistent evolving persona. Two primary work domains were indicated: philosophical concept analysis and security-focused code review. The novel worldbuilding project was confirmed as a significant inspiration — specifically AI entities that mutate from user-provided context, operating without external training data. Voice drift not applied; baseline calibration retained.",
+      "summary": "Initial session. Jamie established the recursive identity framework and articulated intent to use Second Self as a persistent evolving persona. Two primary work domains were indicated: philosophical concept analysis and security-focused code review. The novel worldbuilding project was confirmed as a significant inspiration — specifically AI entities that mutate from user-provided context, operating without external training data. Voice drift not applied; baseline calibration retained.",
       "signals_extracted": 4,
       "voice_drift_applied": false
+    },
+    {
+      "session": 2,
+      "timestamp": "2026-04-13T00:00:00.000000+00:00",
+      "summary": "Session 2 was substantive and project-focused. Jamie used Second Self as an operational session — building a production skill (cartographer-of-realms, synthesising two source documents) and commissioning a full cultivation system design for the active novel project Quantum Whimsy: The Glitch in the Weave. The Resonance Disciplines system was designed to preserve all seven hard rules of the Weave. Working method is high-trust, high-context: source material provided, synthesis expected, no scaffolding required. Voice drift applied minimally — session tone closely matched the existing calibration.",
+      "signals_extracted": 6,
+      "voice_drift_applied": true
     }
   ]
 }
